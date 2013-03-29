@@ -1,0 +1,3 @@
+<customrulecondition class="${packageName}.MyCustomRuleCondition">
+    <property name="name" value="My Custom Rule Condition"/>
+</customrulecondition>
