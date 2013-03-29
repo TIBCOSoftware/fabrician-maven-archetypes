@@ -1,0 +1,13 @@
+<archetype xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0 http://maven.apache.org/xsd/archetype-1.0.0.xsd">
+    <id>enabler-archetype</id>
+    <sources>
+        <source>src/main/java/MyEnabler.java</source>
+    </sources>
+    <resources>
+        <resource>src/main/assembly/enabler.xml</resource>
+        <resource>src/main/resources/configure.xml</resource>
+        <resource>src/main/resources/container.xml</resource>
+        <resource>src/main/resources/grid-library.xml</resource>
+    </resources>
+</archetype>
