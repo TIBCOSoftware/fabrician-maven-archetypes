@@ -5,6 +5,13 @@ Introduction
 --------------------------------------
 This project includes a set of Maven Archetypes for starting Fabrician projects.
 
+To use these archetypes you simply install them.
+
+```bash
+mvn install
+```
+
+
 Enabler Archetype
 --------------------------------------
 The Enabler Archetype creates a simple project for developing a custom TIBCO Silver Fabric Enabler.
