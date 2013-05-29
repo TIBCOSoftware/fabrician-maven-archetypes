@@ -1,4 +1,4 @@
-<container class="${packageName}.MyEnabler.java">
+<container class="${packageName}.MyEnabler">
 	<import package="com.datasynapse.fabric.container"/>
 	<import package="com.datasynapse.fabric.domain"/>
 	<import package="com.datasynapse.fabric.common"/>
