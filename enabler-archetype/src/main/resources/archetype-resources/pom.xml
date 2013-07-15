@@ -1,45 +1,107 @@
+<!-- 
+
+First, create a pom.properties file to set your Broker location and distribution archive, e.g.:
+
+broker.home=/opt/TIBCO/fabric/
+distribution.archive=/home/me/Downloads/myapp-archive.tar.gz     
+
+-->
+
+<!-- 
+    Usage: 
+    mvn [goal]          // acts on the enabler only
+    mvn -Ddist [goal]   // acts on the enabler and the distribution 
+    
+    Goals: test: creates the expanded gridlib(s), suitable for Engine Test 
+    package: creates the gridlib(s) 
+    install: creates and copies the gridlib(s) to your Broker. 
+-->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>${groupId}</groupId>
     <artifactId>${artifactId}</artifactId>
     <version>${version}</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     
-    <name>A custom Fabrician project</name>
+    <name>MyApp Enabler</name>
+    <description>MyApp description</description>
     <url>http://www.fabrician.org</url>
     
     <properties>
-        <fabric-version>5.0.2.7</fabric-version>
-        <fabric-location>${project.basedir}/SilverFabricSDK.jar</fabric-location>
-        <distro-version>2.2.23</distro-version>
+        <!-- these should be left alone -->
+        <distibution.gridlib.name>${project.artifactId}-${distribution.os}-${distribution.version}-distribution-gridlib</distibution.gridlib.name>
+        <enabler.gridlib.name>${project.artifactId}-${project.version}-enabler-gridlib</enabler.gridlib.name>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- this is the directory where the extracted grid-libraries are built  -->
+        <!-- set this as an expanded Grid Library Location on your Broker for Engine Testing. -->
+        <gridlib.dir>${project.build.directory}/gridlib</gridlib.dir>
+        <!-- adjust to your OS accordingly -->
+        <distribution.os>linux64</distribution.os>
+        <!--  typically set this to the version of the software you are enabling -->
+        <distribution.version>1.0.0</distribution.version>
     </properties>
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <debug>true</debug>      
-                </configuration>
-            </plugin>       
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
                 <executions>
+                    <!-- read properties for broker.home and distribution.archive -->
                     <execution>
-                        <id>enabler-jar</id>
-                        <phase>process-classes</phase>
+                        <phase>initialize</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>read-project-properties</goal>
                         </goals>
-                        <inherited>false</inherited>
                         <configuration>
-                            <includes>
-                                <include>**/*.class</include>
-                            </includes>
+                            <files>
+                                <file>pom.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <!-- copy the enabler files to the test gridlib dir -->
+                    <execution>
+                        <id>copy-enabler</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${gridlib.dir}/${enabler.gridlib.name}/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/content/enabler</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <!-- copy the enabler gridlib to your Broker -->
+                    <execution>
+                        <id>copy-enabler-gridlib</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${broker.home}/webapps/livecluster/deploy/resources/gridlib/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>${enabler.gridlib.name}.tar.gz</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
@@ -48,31 +110,142 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
                 <executions>
+                    <!-- create the enabler gridlib from your test dir -->
                     <execution>
-                        <id>distribution</id>
-                        <configuration>
-                            <descriptors>
-                                 <descriptor>src/main/assembly/enabler.xml</descriptor>
-                            </descriptors>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <attach>true</attach>
-                        </configuration>
+                        <id>runtime</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>${enabler.gridlib.name}</finalName>
+                            <descriptors>
+                                <descriptor>src/main/assembly/enabler.xml</descriptor>
+                            </descriptors>
+                            <attach>true</attach>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <!-- since these are not artifacts deployed to a maven repo, disable these -->
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-    <dependencies>
-        <dependency>
-            <groupId>com.datasynapse.fabricserver</groupId>
-            <artifactId>fabric</artifactId>
-            <version>${fabric-version}</version>
-            <scope>system</scope>
-            <systemPath>${fabric-location}</systemPath>
-        </dependency>
-    </dependencies>
+    <profiles>
+        <profile>
+            <activation>
+                <property>
+                    <name>dist</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <!-- untar the distibution archive -->
+                            <execution>
+                                <id>unpack-distribution</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <ant target="unpack" inheritRefs="true">
+                                            <property name="source" value="${distribution.archive}" />
+                                            <property name="target" value="${gridlib.dir}/${distibution.gridlib.name}" />
+                                        </ant>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <!-- copy the distribution files to the test gridlib dir -->
+                            <execution>
+                                <id>copy-distribution</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                                <configuration>
+                                    <outputDirectory>${gridlib.dir}/${distibution.gridlib.name}/</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/content/distribution</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <!-- copy the distribution gridlib to your Broker -->
+                            <execution>
+                                <id>copy-distribution-gridlib</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${broker.home}/webapps/livecluster/deploy/resources/gridlib/</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}</directory>
+                                            <includes>
+                                                <include>${distibution.gridlib.name}.tar.gz</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.4</version>
+                        <executions>
+                            <!-- create the enabler gridlib from your gridlib dir -->
+                            <execution>
+                                <id>distribution</id>
+                                <configuration>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <finalName>${distibution.gridlib.name}</finalName>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/distribution.xml</descriptor>
+                                    </descriptors>
+                                    <attach>false</attach>
+                                </configuration>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

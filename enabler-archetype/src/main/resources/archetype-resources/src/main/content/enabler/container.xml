@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!--
+################################################################################
+# Example Enabler Definition
+#
+# Common Variables (Change as Desired)
+# 
+# APP_BASE_DIR: The application root directory 
+#
+#################################################################################
+-->
+<container class="com.datasynapse.fabric.container.ExecContainer">
+    <property name="name" value="${project.name}"/>
+    <property name="description" value="${project.description}"/>
+    <property name="version" value="${project.artifact.version}"/>
+    <property name="distributionVersion" value="${distribution.version}"/>
+    <property name="blocking" value="false"/>
+    <property name="supportedDomainType" value="Default"/>
+    
+    <script class="com.datasynapse.fabric.common.script.Script">
+        <property name="name" value="enabler.py"/>
+        <property name="language" value="jython"/>
+        <property name="languageVersion" value="2.5"/>
+    </script>
+    
+    <supportedFeature class="com.datasynapse.fabric.container.Feature">
+        <property name="name" value="Capture Support"/>
+        <property name="description" value="Support for capturing running Components"/>
+        <property name="infoDescription" value="Specify if capture is enabled for this Component"/>
+        <property name="infoClass" value="com.datasynapse.fabric.domain.featureinfo.CaptureFeatureInfo"/>
+    </supportedFeature>
+    
+    <runtimecontexttemplate class="com.datasynapse.fabric.common.DefaultRuntimeContext">
+        <variable class="com.datasynapse.fabric.common.RuntimeContextVariable">
+            <property name="name" value="DELETE_RUNTIME_DIR_ON_SHUTDOWN"/>
+            <property name="value" value="false"/>
+        </variable>
+        <variable class="com.datasynapse.fabric.common.RuntimeContextVariable">
+            <property name="name" value="APP_BASE_DIR"/>
+            <property name="value" value="${CONTAINER_WORK_DIR}/myapp"/>
+            <property name="description" value="Path where MyApp resides after installation"/>
+        </variable>
+        <variable class="com.datasynapse.fabric.common.RuntimeContextVariable">
+            <property name="name" value="APP_DATA_DIR"/>
+            <property name="value" value="${APP_BASE_DIR}/data"/>
+            <property name="description" value="Path where data files are located"/>
+        </variable>
+        <variable class="com.datasynapse.fabric.common.RuntimeContextVariable">
+            <property name="name" value="RUNAS_USER"/>
+            <property name="value" value="appuser"/>
+            <property name="description" value="RunAs username"/>
+        </variable>
+        <variable class="com.datasynapse.fabric.common.RuntimeContextVariable">
+            <property name="name" value="HOST_IP"/>
+            <property name="value" value="${LISTEN_ADDRESS}"/>
+            <property name="export" value="true"/>
+        </variable>
+        <variable class="com.datasynapse.fabric.common.RuntimeContextVariable">
+            <property name="name" value="PORT"/>
+            <property name="value" value="12345"/>
+            <property name="export" value="true"/>
+            <property name="autoIncrementType" value="Numeric"/>
+        </variable>
+        <variable class="com.datasynapse.fabric.common.RuntimeContextVariable">
+            <property name="name" value="CAPTURE_INCLUDES"/>
+            <property name="value" value="${APP_DATA_DIR}/*"/>
+        </variable>
+        <variable class="com.datasynapse.fabric.common.RuntimeContextVariable">
+            <property name="name" value="CAPTURE_EXCLUDES"/>
+            <property name="value" value="${APP_DATA_DIR}/*.pid"/>
+        </variable>
+    </runtimecontexttemplate>
+</container>

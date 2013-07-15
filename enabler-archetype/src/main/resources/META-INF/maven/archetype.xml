@@ -1,13 +1,16 @@
 <archetype xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0 http://maven.apache.org/xsd/archetype-1.0.0.xsd">
     <id>enabler-archetype</id>
-    <sources>
-        <source>src/main/java/MyEnabler.java</source>
-    </sources>
+    
     <resources>
+        <resource>build.xml</resource>
         <resource>src/main/assembly/enabler.xml</resource>
-        <resource>src/main/resources/configure.xml</resource>
-        <resource>src/main/resources/container.xml</resource>
-        <resource>src/main/resources/grid-library.xml</resource>
+        <resource>src/main/assembly/distribution.xml</resource>
+        <resource>src/main/content/distribution/grid-library.xml</resource>
+        <resource>src/main/content/enabler/grid-library.xml</resource>
+        <resource>src/main/content/enabler/container.xml</resource>
+        <resource>src/main/content/enabler/configure.xml</resource>
+        <resource>src/main/content/enabler/content/sample.conf</resource>
+        <resource>src/main/content/enabler/scripts/enabler.py</resource>
     </resources>
 </archetype>
