@@ -53,10 +53,7 @@ def doStart():
         logInfo("Data dir does not exist, creating and initializing: " + datadir)
         os.makedirs(datadir)
         call(['chown','-R',runasuser, datadir]);
-        command = os.path.join(basedir, "bin")
-        command = os.path.join(command, 'myinit')
-        command = command + ' -D ' + datadir
-        callAsUser(command, runasuser)
+        # do some initialization 
     else : 
         logInfo("Data directory already exists: " + datadir);
 
@@ -97,9 +94,10 @@ def getComponentRunningConditionErrorMessage():
     return "status returned nonzero"
 
 def callControlCommand(cmd, basedir, datadir, runasuser):
-    command = os.path.join(basedir, "bin")
-    command = os.path.join(command, "app_ctl")
-    command = command + ' -D ' + datadir + ' ' + cmd 
+    # set up the control command here, for example
+    # command = os.path.join(basedir, "bin")
+    # command = os.path.join(command, "app_ctl")
+    # command = command + ' -D ' + datadir + ' ' + cmd 
     return callAsUser(command, runasuser)
     
     
