@@ -1,2 +1,13 @@
+<!--
+################################################################################
+# Example Configuration
+#
+# This example performs Velocity substitution of runtime variables on sample.conf
+# 
+#################################################################################
+-->
 <containerConfig>
+    <configFiles baseDir='${CONTAINER_WORK_DIR}' include='sample.conf'>
+        <velocity/>
+    </configFiles>
 </containerConfig>

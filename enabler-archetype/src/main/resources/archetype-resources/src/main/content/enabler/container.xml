@@ -3,10 +3,6 @@
 ################################################################################
 # Example Enabler Definition
 #
-# Common Variables (Change as Desired)
-# 
-# APP_BASE_DIR: The application root directory 
-#
 #################################################################################
 -->
 <container class="com.datasynapse.fabric.container.ExecContainer">
