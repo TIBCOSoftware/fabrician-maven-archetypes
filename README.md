@@ -17,7 +17,7 @@ Enabler Archetype
 The Enabler Archetype creates a simple project for developing a custom TIBCO Silver Fabric Enabler.
 
 ```bash
-mvn archetype:generate -DarchetypeGroupId=org.fabrician -DarchetypeArtifactId=enabler-archetype -DarchetypeVersion=1.0 -DgroupId=my.groupId -DartifactId=myArtifactId
+mvn archetype:generate -DarchetypeGroupId=org.fabrician -DarchetypeArtifactId=enabler-archetype -DarchetypeVersion=1.1 -DgroupId=my.groupId -DartifactId=myArtifactId
 ```
 
 Custom Rule Condition Archetype
@@ -25,5 +25,5 @@ Custom Rule Condition Archetype
 The Condition Archetype creates a simple project for developing a custom TIBCO Silver Fabric Custom Rule Condition.
 
 ```bash
-mvn archetype:generate -DarchetypeGroupId=org.fabrician -DarchetypeArtifactId=condition-archetype -DarchetypeVersion=1.0 -DgroupId=my.groupId -DartifactId=myArtifactId
+mvn archetype:generate -DarchetypeGroupId=org.fabrician -DarchetypeArtifactId=condition-archetype -DarchetypeVersion=1.1 -DgroupId=my.groupId -DartifactId=myArtifactId
 ```
